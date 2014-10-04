@@ -19,9 +19,8 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
+#include <GL/glew.h>
 #include <GL/glut.h>
-#include <GL/glu.h>
-#include <GL/gl.h>
 #endif
 
 static int win = 0;
