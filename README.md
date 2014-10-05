@@ -2,7 +2,7 @@
 
 ## Common
 * Boost
-* GLM (glm.g-truc.ne)
+* GLM (http://glm.g-truc.ne)
 
 ## Windows
 * GLEW (http://glew.sourceforge.net/)
