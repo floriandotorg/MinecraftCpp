@@ -76,7 +76,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="block.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="window.cpp" />
+    <ClCompile Include="world.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="block.hpp" />
+    <ClInclude Include="OpenGL.h" />
+    <ClInclude Include="singleton.hpp" />
+    <ClInclude Include="utility.hpp" />
+    <ClInclude Include="window.hpp" />
+    <ClInclude Include="world.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
