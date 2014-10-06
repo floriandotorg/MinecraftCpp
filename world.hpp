@@ -1,22 +1,23 @@
 #pragma once
 
-#include <list>
 #include <memory>
+
+#include <boost/range/any_range.hpp>
 
 class block;
 
 class world
 {
 public:
-	typedef std::list<block> block_container;
+	typedef boost::any_range<block, boost::forward_traversal_tag> block_range;
 
 	world();
 	~world();
 
-	const block_container& shown_blocks();
+	const block_range shown_blocks();
 
 private:
 	class impl;
-	std::unique_ptr<impl> m;
+	std::unique_ptr<impl> _m;
 
 };
