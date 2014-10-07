@@ -76,18 +76,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="block.cpp" />
+    <ClCompile Include="block_factory.cpp" />
+    <ClCompile Include="textured_block.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="texture_manager.cpp" />
     <ClCompile Include="window.cpp" />
     <ClCompile Include="world.cpp" />
+    <ClCompile Include="world_generator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="block.hpp" />
+    <ClInclude Include="abstract_block.hpp" />
+    <ClInclude Include="block_factory.hpp" />
+    <ClInclude Include="textured_block.hpp" />
+    <ClInclude Include="face.hpp" />
     <ClInclude Include="OpenGL.h" />
-    <ClInclude Include="singleton.hpp" />
+    <ClInclude Include="texture.hpp" />
+    <ClInclude Include="texture_manager.hpp" />
     <ClInclude Include="utility.hpp" />
     <ClInclude Include="window.hpp" />
     <ClInclude Include="world.hpp" />
+    <ClInclude Include="world_block.hpp" />
+    <ClInclude Include="world_generator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

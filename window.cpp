@@ -3,9 +3,8 @@
 #include <ctime>
 
 #include <list>
+#include <memory>
 #include <functional>
-
-#include <boost/range/algorithm/for_each.hpp>
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -13,12 +12,12 @@
 #include "OpenGL.h"
 #include "world.hpp"
 #include "utility.hpp"
-#include "singleton.hpp"
-#include "block.hpp"
 
-class window::impl : public singleton<window::impl>
+class window::impl
 {
 public:
+    static impl& instance();
+
 	impl();
 	int run(int argc, char * argv[]);
 
@@ -29,25 +28,29 @@ public:
 	void key_up(unsigned char key, int x, int y);
 
 private:
-	friend class singleton<window::impl>;
-
 	static const int DESIRED_STATE_UPDATES_PER_SECOND = 50;
 	static const int DESIRED_STATE_UPDATE_DURATION_MS = 1000 / DESIRED_STATE_UPDATES_PER_SECOND;
+
+    void create_glut_window();
+    glm::vec3 motion_vector();
+    void update(double dt);
+    void create_glut_callbacks();
+    void init_opengl();
 
 	double last_loop_time;
 	double time_accumulated_ms;
 	int win;
-
 	glm::vec3 position;
 	glm::vec2 rotation;
 	int strafe[2];
 	world world;
-	void create_glut_window();
-	glm::vec3 motion_vector();
-	void update(double dt);
-	void create_glut_callbacks();
-	void init_opengl();
 };
+
+window::impl& window::impl::instance()
+{
+    static std::unique_ptr<impl> instance(new impl());
+    return *instance;
+}
 
 int window::run(int argc, char * argv[])
 { return window::impl::instance().run(argc, argv); }
@@ -78,6 +81,8 @@ int window::impl::run(int argc, char * argv[])
 	create_glut_window();
 	create_glut_callbacks();
 	init_opengl();
+
+    world.init();
 
 	glutMainLoop();
 
@@ -141,6 +146,8 @@ void window::impl::update(double dt)
 	position.x += motion.x * d;
 	position.y += motion.y * d;
 	position.z += motion.z * d;
+
+    world.update(dt);
 }
 
 void window::impl::idle()
@@ -181,7 +188,7 @@ void window::impl::display()
 
 	glTranslatef(-position.x, -position.y, -position.z);
 
-	boost::for_each(world.shown_blocks(), std::mem_fn(&block::draw));
+    world.draw();
 
 	glFlush();
 	glutSwapBuffers();

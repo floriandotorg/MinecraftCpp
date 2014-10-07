@@ -1,65 +1,65 @@
 #include "world.hpp"
 
 #include <list>
-#include <utility>
 
 #include <boost/range/algorithm/find_if.hpp>
+#include <boost/range/algorithm/for_each.hpp>
 
-#include "block.hpp"
+#include "world_block.hpp"
+#include "world_generator.hpp"
 
 class world::impl
 {
 public:
-	impl();
+    impl();
 
-	const world::block_range shown_blocks();
+    void init();
+
+    void update(double dt);
+    void draw() const;
 
 private:
-	typedef std::list<block> block_container;
+    typedef std::list<world_block> block_container;
 
-	void generate();
-	void place_block(block &&block);
-	void remove_block(const glm::vec3 &pos);
+    void place_block(const world_block &&world_block);
+	void remove_block(const abstract_block &block);
 	
 	block_container _blocks;
+    world_generator _world_generator;
 };
 
 world::impl::impl()
+    : _world_generator(42)
+{ }
+
+void world::impl::init()
 {
-	generate();
+    boost::for_each(_world_generator.generate(glm::vec2(-5, -5), glm::vec2(10, 10)), [this](world_block world_block) {
+        this->place_block(std::move(world_block));
+    });
 }
 
-void world::impl::place_block(block &&block)
+void world::impl::place_block(const world_block &&world_block)
 {
-    _blocks.push_back(std::move(block));
+    _blocks.push_back(std::move(world_block));
 }
 
-void world::impl::remove_block(const glm::vec3 &pos)
+void world::impl::remove_block(const abstract_block &block)
 {
-    _blocks.erase(boost::range::find_if(_blocks, [pos](const block &block){ return block.pos() == pos; }));
+    const abstract_block *block_addr = &block;
+    _blocks.erase(boost::range::find_if(_blocks, [block_addr](const world_block &world_block){ return &*world_block.block == block_addr; }));
 }
 
-const world::block_range world::impl::shown_blocks()
+void world::impl::update(double dt)
 {
-    return _blocks;
+    boost::for_each(_blocks, [dt](const world_block &world_block) { world_block.block->update(dt); } );
 }
 
-void world::impl::generate()
+void world::impl::draw() const
 {
-	for (int x = -5; x < 5; ++x)
-	{
-		for (int z = -5; z < 5; ++z)
-		{
-			place_block(block(glm::vec3(x, 0, z), block::grass));
-		}
-	}
-
-	remove_block(glm::vec3(1, 0, 1));
-	place_block(block(glm::vec3(1, 0, 1), block::stone));
-
-	place_block(block(glm::vec3(2, 1, 2), block::bricks));
-
-	place_block(block(glm::vec3(-3, 1, -1), block::sand));
+    boost::for_each(_blocks, [](const world_block &world_block) {
+        world_block.block->draw(world_block.pos);
+    });
 }
 
 ///
@@ -71,5 +71,11 @@ world::world()
 world::~world()
 { }
 
-const world::block_range world::shown_blocks()
-{ return _m->shown_blocks(); }
+void world::update(double dt)
+{ _m->update(dt); }
+
+void world::draw() const
+{ _m->draw(); }
+
+void world::init() 
+{ _m->init(); }
