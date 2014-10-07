@@ -2,10 +2,10 @@
 
 #include "OpenGL.h"
 
-#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 
 struct texture
 {
     GLuint id;
-    glm::vec3 coords;
+    glm::vec2 coords[4];
 };

@@ -37,7 +37,7 @@ world_generator::world_block_range world_generator::impl::generate(glm::vec2 ori
     {
         for (int z = static_cast<int>(origin.y); z < origin.y + size.y; ++z)
         {
-            result.push_back({ block_factory.create("grass"), glm::vec3(x, 0, z) });
+            result.push_back({ block_factory.create("sand"), glm::vec3(x, 0, z) });
         }
     }
 

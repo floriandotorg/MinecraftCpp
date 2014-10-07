@@ -1,18 +1,21 @@
 #include "texture_manager.hpp"
 
 #include <memory>
+#include <map>
 
 class texture_manager_impl : public texture_manager
 {
 public:
     texture_manager_impl();
 
-    virtual texture get_texture_for_face(const std::string &name, face face) const;
+    virtual texture get_texture(const std::string &name) const;
 
 private:
+    typedef std::map< std::string, texture > texture_map;
+
     GLuint loadBMP_custom(const char * imagepath);
 
-    const GLuint _texture_id;
+    texture_map _texture_map;
 };
 
 texture_manager& texture_manager::instance()
@@ -22,8 +25,20 @@ texture_manager& texture_manager::instance()
 }
 
 texture_manager_impl::texture_manager_impl()
-    : _texture_id(loadBMP_custom("texture.bmp"))
-{ }
+{
+    GLuint texture_id = loadBMP_custom("texture.bmp");
+
+    _texture_map.insert(texture_map::value_type("grass.top", { texture_id, { glm::vec2(0.5, 0.0), glm::vec2(0.5, 0.25), glm::vec2(0.25, 0.25), glm::vec2(0.25, 0.0) } }));
+    _texture_map.insert(texture_map::value_type("grass.bottom", { texture_id, { glm::vec2(0.25, 0.25), glm::vec2(0.25, 0.5), glm::vec2(0.0, 0.5), glm::vec2(0.0, 0.25) } }));
+    _texture_map.insert(texture_map::value_type("grass", { texture_id, { glm::vec2(0.25, 0.0), glm::vec2(0.25, 0.25), glm::vec2(0.0, 0.25), glm::vec2(0.0, 0.0) } }));
+
+    _texture_map.insert(texture_map::value_type("smooth_stone_bricks", { texture_id, { glm::vec2(0.75, 0.25), glm::vec2(0.75, 0.5), glm::vec2(0.5, 0.5), glm::vec2(0.5, 0.25) } }));
+    
+    _texture_map.insert(texture_map::value_type("sand", { texture_id, { glm::vec2(0.5, 0.25), glm::vec2(0.5, 0.5), glm::vec2(0.25, 0.5), glm::vec2(0.25, 0.25) } }));
+    
+    _texture_map.insert(texture_map::value_type("bricks", { texture_id, { glm::vec2(0.75, 0.0), glm::vec2(0.75, 0.25), glm::vec2(0.5, 0.25), glm::vec2(0.5, 0.0) } }));
+
+}
 
 GLuint texture_manager_impl::loadBMP_custom(const char * imagepath)
 {
@@ -86,7 +101,7 @@ GLuint texture_manager_impl::loadBMP_custom(const char * imagepath)
     return textureID;
 }
 
-texture texture_manager_impl::get_texture_for_face(const std::string &name, face face) const
+texture texture_manager_impl::get_texture(const std::string &name) const
 {
-    return{ _texture_id, glm::vec3() };
+    return _texture_map.at(name);
 }
